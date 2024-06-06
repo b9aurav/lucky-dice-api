@@ -15,23 +15,25 @@ function generateResult(dice1, dice2, choice) {
   return result;
 }
 
-function calculatePoints(result, bet, points) {
+function calculatePoints(result, bet, points, lucky7) {
+  if (lucky7 && result === "Won") return 5 * bet + points;
+  if (lucky7 && result === "Lost") return points - (5 * bet);
   const newPoints = result === "Won" ? points + bet : points - bet;
   return newPoints;
 }
 
 exports.rollDice = async function (req, res) {
-    res.json(rollDice());
+  res.json(rollDice());
 };
 
 exports.getResult = async function (req, res) {
-    const { dice1, dice2, choice } = req.body;
-    const result = generateResult(dice1, dice2, choice);
-    res.json({ result: result });
-}
+  const { dice1, dice2, choice } = req.body;
+  const result = generateResult(dice1, dice2, choice);
+  res.json({ result: result });
+};
 
 exports.getPoints = async function (req, res) {
-    const { result, bet, points } = req.body;
-    const newPoints = calculatePoints(result, bet, points);
-    res.json({ points: newPoints });
-}
+  const { result, bet, points, lucky7 } = req.body;
+  const newPoints = calculatePoints(result, bet, points, lucky7);
+  res.json({ points: newPoints });
+};
